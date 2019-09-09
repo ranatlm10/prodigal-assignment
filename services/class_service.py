@@ -88,6 +88,12 @@ class ClassService:
 
     @staticmethod
     def func_Q2(db):
+        """
+        Analyse the number of courses
+        There are 501 different courses
+        :param db: Mongo database client
+        :return: the number of different courses in the data provided
+        """
         grades_collection = db.grades
         class_list = list(grades_collection.distinct("class_id", {}))
 
