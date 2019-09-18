@@ -23,7 +23,7 @@ class ClassService:
         if class_id is None:
             raise CustomException("Class id is missing")
 
-        results = list(self.grades_collection.aggregate([{"$match": {"class_id": 0}},
+        results = list(self.grades_collection.aggregate([{"$match": {"class_id": class_id}},
                                                          {"$lookup": {"from": "students", "localField": "student_id",
                                                                       "foreignField": "_id", "as": "student"}},
                                                          {"$unwind": {"path": "$student",
@@ -37,7 +37,7 @@ class ClassService:
         if class_id is None:
             raise CustomException("Class id is missing")
 
-        results = list(self.grades_collection.aggregate([{"$match": {"class_id": 0}},
+        results = list(self.grades_collection.aggregate([{"$match": {"class_id": class_id}},
                                                          {"$lookup": {"from": "students", "localField": "student_id",
                                                                       "foreignField": "_id", "as": "student"}},
                                                          {"$unwind": {"path": "$student",
@@ -45,7 +45,8 @@ class ClassService:
                                                          {"$project": {"student_id": "$student._id",
                                                                        "student_name": "$student.name", "_id": 0,
                                                                        "total_marks":
-                                                                           {"$toInt": {"$sum": "$scores.score"}}}}]))
+                                                                           {"$toInt": {"$sum": "$scores.score"}}}},
+                                                         {"$group": {"_id": { "student_id": "$student_id" }, "max_marks": {"$max": "$total_marks"}}}]))
 
         return {"class_id": class_id, "students": results}
 
@@ -53,7 +54,7 @@ class ClassService:
         if class_id is None:
             raise CustomException("Class id is missing")
 
-        results = list(self.grades_collection.aggregate([{"$match": {"class_id": 0}},
+        results = list(self.grades_collection.aggregate([{"$match": {"class_id": class_id}},
                                                          {"$lookup": {"from": "students", "localField": "student_id",
                                                                       "foreignField": "_id", "as": "student"}},
                                                          {"$unwind": {"path": "$student",
